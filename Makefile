@@ -10,6 +10,7 @@ compile:
 
 ct: compile test_deps
 	@echo "Running common tests..."
+	@mkdir -p logs
 	-@ct_run -noshell -pa ebin \
 		-pa deps/*/ebin \
 		-pa test/deps/*/ebin \
