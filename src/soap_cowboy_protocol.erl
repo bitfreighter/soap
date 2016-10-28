@@ -56,7 +56,12 @@ upgrade(Cowboy_req, Env, _, {Handler, Options}, Version, Version_module) ->
   Cowboy_state = #state{env = Env, handler = Handler},
   case soap_server_handler:new_req(Handler, Version, Options, Cowboy_req) of
     {continue, Soap_req} ->
-      check_conformance(Soap_req, Cowboy_req, Cowboy_state, Version_module);
+      case soap_server_handler:check_is_service_available(Soap_req) of
+        {continue, Soap_req1} ->
+          check_conformance(Soap_req1, Cowboy_req, Cowboy_state, Version_module);
+        {ok, _StatusCode, _Headers, _Body, _Server_req} = Error ->
+          make_response(Error, Cowboy_state, Version_module)
+      end;
     {ok, _StatusCode, _Headers, _Body, _Server_req} = Error ->
       make_response(Error, Cowboy_state, Version_module)
   end.

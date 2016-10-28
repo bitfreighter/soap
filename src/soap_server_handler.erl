@@ -35,6 +35,7 @@
 -export([new_req/4]).
 -export([handle_message/2]).
 -export([check_http_conformance/1]).
+-export([check_is_service_available/1]).
 
 %%% internal export
 -export([xml_parser_cb_wrapped/2]).
@@ -109,6 +110,27 @@ new_req(Handler, Server, Options, Server_req) ->
             Exception_resp = make_exception(Handler, Soap_error),
             Error_s_req = soap_req:set_resp(Exception_resp, New_req),
             soap_req:http_response(Error_s_req)
+    end.
+
+%% invokes the callback implemented by handler module and
+%% if it return true as first element of tuple then continues
+%% otherwise return 503 "Service unavalible" to client
+-spec check_is_service_available(soap_req())
+        -> server_http_response() | {continue, soap_req()}.
+check_is_service_available(Soap_req) ->
+    Handler = soap_req:handler(Soap_req),
+    Handler_state = soap_req:handler_state(Soap_req),
+    try Handler:is_service_available(Soap_req, Handler_state) of
+        {true, Soap_req2, Handler_st2} ->
+            Soap_req3 = soap_req:set_handler_state(Soap_req2, Handler_st2),
+            {continue, Soap_req3};
+        {false, Soap_req2, Handler_st2} ->
+            Handler_res = {error, 503, Soap_req2, Handler_st2},
+            Soap_req3 = soap_req:set_resp(Handler_res, Soap_req2),
+            soap_req:http_response(Soap_req3)
+    catch
+        _:_ ->
+            {continue, Soap_req}
     end.
 
 %% parses the message, invokes the callbacks implemented by the handler 
