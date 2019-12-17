@@ -19,17 +19,17 @@
 %%
 
 %%%
-%%% SOAP handler for Cowboy, version 2. 
+%%% SOAP handler for Cowboy, version 2.
 %%% Takes care of the SOAP specific stuff such as decoding and encoding the
 %%% xml, some error handling on the level of the soap protocol, etc.
 %%%
-%%% Most of the logic is shared between cowboy v.1 and cowboy v.2, in the module 
-%%% 'soap_cowboy_protocol'. 
+%%% Most of the logic is shared between cowboy v.1 and cowboy v.2, in the module
+%%% 'soap_cowboy_protocol'.
 
 -module(soap_cowboy_2_protocol).
 %%-behaviour(cowboy_sub_protocol).
 
--export([upgrade/6]).
+-export([upgrade/4]).
 -export([enrich_req/2]).
 -export([respond/4]).
 
@@ -45,11 +45,11 @@
 %% From the Cowboy documentation:
 %% This callback is expected to behave like a middleware and to return an
 %% updated req object and environment.
--spec upgrade(Cowboy_req::cowboy_req(), Env::cowboy_env(),
-              Soap_handler::module(), {Implementation_handler::module(), Options::any()},
-              Timeout::any(), Hibernate::any()) -> {ok, cowboy_req(), cowboy_env()}. 
-upgrade(Cowboy_req, Env, Soap_handler, {Handler, Options}, _, _) ->
-  soap_cowboy_protocol:upgrade(Cowboy_req, Env, Soap_handler, 
+-spec upgrade(Cowboy_req::cowboy_req(), Env::cowboy_env(),Soap_handler::module(),
+              {Implementation_handler::module(), Options::any()}) ->
+  {ok, cowboy_req(), cowboy_env()}.
+upgrade(Cowboy_req, Env, Soap_handler, {Handler, Options}) ->
+  soap_cowboy_protocol:upgrade(Cowboy_req, Env, Soap_handler,
                                {Handler, Options}, cowboy_2, ?MODULE).
 
 enrich_req(Cowboy_req, Soap_req) ->
