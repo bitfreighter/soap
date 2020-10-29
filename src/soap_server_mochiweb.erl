@@ -27,6 +27,8 @@
 -export([stop/0]).
 -export([handle/3]).
 
+-include("exception.hrl").
+
 start(Module) ->
     start(Module, []).
 
@@ -67,9 +69,9 @@ handle(Req, Handler, Options) ->
                 Req:respond({StatusCode, Headers, Resp_body})
         end
     catch
-        Class:Reason ->
+        ?EXCEPTION(Class, Reason, Stacktrace) ->
             io:format("Class: ~p, Reason: ~p, Stack: ~p~n", 
-                      [Class, Reason, erlang:get_stacktrace()])
+                      [Class, Reason, ?GET_STACK(Stacktrace)])
     end.
 
 enrich_req(Req, Soap_req) ->

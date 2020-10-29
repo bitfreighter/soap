@@ -39,6 +39,8 @@
 -record(sState, {depth = 0, value}).
 -record(attribute, {localName, prefix = [], uri = [], value}).
 
+-include("exception.hrl").
+
 %%% ============================================================================
 %%% Exported functions
 %%% ============================================================================
@@ -129,8 +131,8 @@ callback(Event, State) ->
                 exit(Message)
         end
     catch
-        error:Reason -> 
-            throwError(error, {Reason,erlang:get_stacktrace()}, Event, State);
+        ?EXCEPTION(error, Reason, Stacktrace) ->
+            throwError(error, {Reason,?GET_STACK(Stacktrace)}, Event, State);
         Class:Exception -> throwError(Class, Exception, Event, State)
     end.
 
@@ -171,8 +173,8 @@ skip_callback(Event, State) ->
                 State
         end
     catch
-        error:Reason -> 
-            throwError(error, {Reason,erlang:get_stacktrace()}, Event, State);
+        ?EXCEPTION(error, Reason, Stacktrace) ->
+            throwError(error, {Reason,?GET_STACK(Stacktrace)}, Event, State);
         Class:Exception -> throwError(Class, Exception, Event, State)
     end.
 
