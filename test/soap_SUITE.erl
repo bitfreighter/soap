@@ -191,6 +191,7 @@ groups() ->
   ].
 
 init_per_group(cowboy_server, Config) ->
+  ssl:start(),
   {ok, _} = soap:start_server(sendService_test_server, 
                [{"[a-zA-Z]+", invalid}, 
                 {"^\\+?[0-9]{4,12}$", valid},
@@ -267,6 +268,7 @@ init_per_group(inets_client, Config) ->
   compile_wsdl("test_service.wsdl", Options, Config),
   Config;
 init_per_group(soap_req, Config) ->
+  ssl:start(),
   {ok, _} = soap:start_server(test_service_server_2, [{http_server, cowboy_version()}]),
   Config;
 init_per_group(wsdl_2_0, Config) ->
