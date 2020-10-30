@@ -230,7 +230,7 @@ init_per_group(soap_12_client, Config) ->
   Config;
 init_per_group(tempconvert, Config) ->
   Options = [{http_client, ibrowse}, {http_server, cowboy_version()},
-             {namespaces, [{"http://www.w3schools.com/xml/", "t"}]},
+             {namespaces, [{"https://www.w3schools.com/xml/", "t"}]},
              {generate, both}, {generate_tests, none},
              {client_name, "tempconvert_client"},
              {server_name, "tempconvert_server"},
@@ -241,7 +241,7 @@ init_per_group(tempconvert, Config) ->
 init_per_group(tempconvert_12, Config) ->
   inets:start(),
   Options = [{http_client, inets},  %% use inets for a change
-             {namespaces, [{"http://www.w3schools.com/xml/", "t"}]},
+             {namespaces, [{"https://www.w3schools.com/xml/", "t"}]},
              {generate, client}, {generate_tests, none},
              {client_name, "tempconvert_client"},
              {service, "TempConvert"}, {port, "TempConvertSoap12"}

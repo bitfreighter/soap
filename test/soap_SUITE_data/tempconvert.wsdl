@@ -142,7 +142,7 @@
   </wsdl:binding>
   <wsdl:service name="TempConvert">
     <wsdl:port name="TempConvertSoap" binding="tns:TempConvertSoap">
-      <soap:address location="http://www.w3schools.com/xml/tempconvert.asmx" />
+      <soap:address location="https://www.w3schools.com/xml/tempconvert.asmx" />
     </wsdl:port>
     <wsdl:port name="TempConvertSoap12" binding="tns:TempConvertSoap12">
       <soap12:address location="https://www.w3schools.com/xml/tempconvert.asmx" />
