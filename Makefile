@@ -1,12 +1,14 @@
+REBAR?=./rebar3
+
 .PHONY: all compile clean ct test_deps
 
 all: compile
 
 compile:
 	@echo "Fetching dependencies..."
-	@rebar3 get-deps
+	$(REBAR) get-deps
 	@echo "Compiling..."
-	@rebar3 compile
+	$(REBAR) compile
 
 ct: compile test_deps
 	@echo "Running common tests..."
@@ -22,11 +24,11 @@ ct: compile test_deps
 
 test_deps:
 	@echo "Checking dependencies for test..."
-	@cd test && rebar3 get-deps && rebar3 compile && cd ..
+	@cd test && ../$(REBAR) get-deps && ../$(REBAR) compile && cd ..
 
 clean:
-	@rebar3 clean
-	@cd test && rebar3 clean && cd ..
+	$(REBAR) clean
+	@cd test && ../$(REBAR) clean && cd ..
 
 distclean: clean
 	@rm -rf ./_build/ && rm -rf ./test/_build/
