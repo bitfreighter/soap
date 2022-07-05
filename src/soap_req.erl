@@ -304,7 +304,7 @@ soap_env(Body, Headers, _) ->
      <<"</S:Body></S:Envelope>">>].
 
 headers([]) ->
-    [<<"<env:Header/>">>].
+    [<<"<env:Header/>">>];
 headers(Headers) ->
     [<<"<env:Header>">>, Headers, <<"</env:Header>">>].
 
