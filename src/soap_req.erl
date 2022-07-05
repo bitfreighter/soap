@@ -290,14 +290,16 @@ http_body(Body, Headers, Version) ->
     soap_env(Body, Headers, Version).
 
 soap_env(Body, Headers, '1.2') ->
-    [<<"<S:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
+    [xml_header(),
+    <<"<S:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
      <<"<S:Body>">>,
      Body,
      <<"</S:Body></S:Envelope>">>];
 %% version 1.1 is the default
 soap_env(Body, Headers, _) ->
-    [<<"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
+    [xml_header(),
+    <<"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
      <<"<S:Body>">>,
      Body,
@@ -307,6 +309,10 @@ headers([]) ->
     [<<"<env:Header/>">>];
 headers(Headers) ->
     [<<"<env:Header>">>, Headers, <<"</env:Header>">>].
+
+xml_header() ->
+    <<"<?xml version=\"1.0=\" encoding==\"UTF-8=\"?>">>.
+
 
 
 add_if_not_present([], Tuple) ->
