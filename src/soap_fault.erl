@@ -178,27 +178,27 @@ fault_1_1(Fault_code, Fault_string, Details, Fault_actor)
     Code = fault_code(Fault_code, '1.1'),
     Actor = fault_actor(Fault_actor, '1.1'),
     Xml_string = xml_string(Fault_string),
-    [<<"<SOAP-ENV:Fault xmlns=\"\">">>,
+    [<<"<S:Fault xmlns=\"\">">>,
      Code,
      <<"<faultstring>">>,
      Xml_string,
      <<"</faultstring>">>,
      Actor,
      fault_detail(Details, '1.1'),
-     <<"</SOAP-ENV:Fault>">>].
+     <<"</S:Fault>">>].
 
 fault_1_2(Fault_code, Fault_strings, Details, Fault_actor) ->
     Code = fault_code(Fault_code, '1.2'),
     Role = fault_actor(Fault_actor, '1.2'),
     Texts = make_reasons(Fault_strings), 
-    [<<"<SOAP-ENV:Fault>">>,
+    [<<"<S:Fault>">>,
      Code,
-     <<"<SOAP-ENV:Reason>">>,
+     <<"<S:Reason>">>,
      Texts,
-     <<"</SOAP-ENV:Reason>">>,
+     <<"</S:Reason>">>,
      Role,
      fault_detail(Details, '1.2'),
-     <<"</SOAP-ENV:Fault>">>].
+     <<"</S:Fault>">>].
 
 %% somewhat confusingly, Fault_strings can be 
 %% - a single #fault_reason{} record
@@ -215,8 +215,8 @@ make_reasons(Fault_string) ->
     make_reason(#fault_reason{text = Fault_string}).
 
 make_reason(#fault_reason{text = Text, lang = Lang}) ->
-    [<<"<SOAP-ENV:Text xml:lang=\"">>, xml_string(Lang), 
-     <<"\">">>, xml_string(Text), <<"</SOAP-ENV:Text>">>].
+    [<<"<S:Text xml:lang=\"">>, xml_string(Lang), 
+     <<"\">">>, xml_string(Text), <<"</S:Text>">>].
 
 fault_code(Code, Version) when is_atom(Code) ->
     Code_string = fault_code_text(Code, Version),
@@ -224,8 +224,8 @@ fault_code(Code, Version) when is_atom(Code) ->
         '1.1' ->
             [<<"<faultcode>">>, Code_string, <<"</faultcode>">>]; 
         '1.2' ->
-            [<<"<SOAP-ENV:Code><SOAP-ENV:Value>">>, Code_string, 
-             <<"</SOAP-ENV:Value></SOAP-ENV:Code>">>]
+            [<<"<S:Code><S:Value>">>, Code_string, 
+             <<"</S:Value></S:Code>">>]
     end;
 fault_code(#faultcode{code = Code}, Version) 
     when Version == '1.1', 
@@ -237,10 +237,10 @@ fault_code(#faultcode{uri = Namespace, code = Code}, Version)
      xml_string(Code), <<"</faultcode>">>]; 
 fault_code(#faultcode{code = Code,
                       subcode = Subcode}, Version) when Version == '1.2' ->
-    [<<"<SOAP-ENV:Code><SOAP-ENV:Value>">>, fault_code_text(Code, Version), 
-     <<"</SOAP-ENV:Value>">>,
+    [<<"<S:Code><S:Value>">>, fault_code_text(Code, Version), 
+     <<"</S:Value>">>,
      subcode_text(Subcode),
-     <<"</SOAP-ENV:Code>">>].
+     <<"</S:Code>">>].
 
 fault_code_text(Code, Version) when is_atom(Code) ->
   fault_code_text_2(Code, Version);
@@ -250,52 +250,52 @@ fault_code_text(Code, Version) when not is_atom(Code) ->
 fault_code_text_2(Code, '1.1') 
     when Code == server;
          Code == "Server" ->
-    <<"SOAP-ENV:Server">>; 
+    <<"S:Server">>; 
 fault_code_text_2(Code, '1.2')
     when Code == server;
          Code == "Receiver" ->
-    <<"SOAP-ENV:Receiver">>; 
+    <<"S:Receiver">>; 
 fault_code_text_2(Code, '1.1')
     when Code == client;
          Code == "Client" ->
-    <<"SOAP-ENV:Client">>; 
+    <<"S:Client">>; 
 fault_code_text_2(Code, '1.2')
     when Code == client;
          Code == "Sender" ->
-    <<"SOAP-ENV:Sender">>; 
+    <<"S:Sender">>; 
 fault_code_text_2(Code, _)  %% version 1.2
     when Code == version_mismatch;
          Code == "VersionMismatch" ->
-    <<"SOAP-ENV:VersionMismatch">>; 
+    <<"S:VersionMismatch">>; 
 fault_code_text_2(Code, _)  %% version 1.2
     when Code == must_understand;
          Code == "MustUnderstand" ->
-    <<"SOAP-ENV:MustUnderstand">>; 
+    <<"S:MustUnderstand">>; 
 fault_code_text_2(Code, _)  %% version 1.2
     when Code == data_encoding_unknown;
          Code == "DataEncodingUnknown" ->
-    <<"SOAP-ENV:DataEncodingUnknown">>.
+    <<"S:DataEncodingUnknown">>.
 
 subcode_text(#faultcode{uri = Namespace, code = Text}) ->
-    [<<"<SOAP-ENV:Subcode><SOAP-ENV:Value xmlns:SUB=\"">>, Namespace, 
+    [<<"<S:Subcode><S:Value xmlns:SUB=\"">>, Namespace, 
      <<"\">SUB:">>, xml_string(Text), 
-     <<"</SOAP-ENV:Value></SOAP-ENV:Subcode>">>].
+     <<"</S:Value></S:Subcode>">>].
 
 fault_actor(undefined, _) ->
     <<>>;
 fault_actor(Actor, '1.1') ->
     [<<"<faultactor>">>, xml_string(Actor), <<"</faultactor>">>];
 fault_actor(Actor, '1.2') ->
-    [<<"<SOAP-ENV:Role>">>, xml_string(Actor), <<"</SOAP-ENV:Role>">>].
+    [<<"<S:Role>">>, xml_string(Actor), <<"</S:Role>">>].
 
 fault_detail([], '1.1') ->
     <<"<detail/>">>;
 fault_detail(Details, '1.1') ->
     [<<"<detail>">>, Details, <<"</detail>">>];
 fault_detail([], '1.2') ->
-    <<"<SOAP-ENV:Detail/>">>;
+    <<"<S:Detail/>">>;
 fault_detail(Details, '1.2') ->
-    [<<"<SOAP-ENV:Detail>">>, Details, <<"</SOAP-ENV:Detail>">>].
+    [<<"<S:Detail>">>, Details, <<"</S:Detail>">>].
 
 xml_string(String) ->
     soap_req:xml_string(String).
@@ -321,7 +321,7 @@ make_code(String, N_spaces) ->
 %%%
 %%% These are erlsom:sax callback functions. The reason to use custom parsers 
 %%% is that none of the existing erlsom sax parsers make it possible to deal
-%%% with qnames ("<SOAP-ENV:Value xmlns:SUB="uri">SUB:code</SOAP-ENV:Value>").
+%%% with qnames ("<S:Value xmlns:SUB="uri">SUB:code</S:Value>").
 %%% ----------------------------------------------------------------------------
 
 parse_fault_1_1(startDocument, _Namespaces, #pf_state{state = start} = S) ->

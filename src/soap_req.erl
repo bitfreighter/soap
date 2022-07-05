@@ -290,23 +290,23 @@ http_body(Body, Headers, Version) ->
     soap_env(Body, Headers, Version).
 
 soap_env(Body, Headers, '1.2') ->
-    [<<"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://www.w3.org/2003/05/soap-envelope\">">>,
+    [<<"<S:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
-     <<"<SOAP-ENV:Body>">>,
+     <<"<S:Body>">>,
      Body,
-     <<"</SOAP-ENV:Body></SOAP-ENV:Envelope>">>];
+     <<"</S:Body></S:Envelope>">>];
 %% version 1.1 is the default
 soap_env(Body, Headers, _) ->
-    [<<"<SOAP-ENV:Envelope xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
+    [<<"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
-     <<"<SOAP-ENV:Body>">>,
+     <<"<S:Body>">>,
      Body,
-     <<"</SOAP-ENV:Body></SOAP-ENV:Envelope>">>].
+     <<"</S:Body></S:Envelope>">>].
 
 headers([]) ->
-    [];
+    [<<"<env:Header/>">>].
 headers(Headers) ->
-    [<<"<SOAP-ENV:Header>">>, Headers, <<"</SOAP-ENV:Header>">>].
+    [<<"<env:Header>">>, Headers, <<"</env:Header>">>].
 
 
 add_if_not_present([], Tuple) ->
