@@ -311,8 +311,7 @@ headers(Headers) ->
     [<<"<env:Header>">>, Headers, <<"</env:Header>">>].
 
 xml_header() ->
-    <<"<?xml version=\"1.0=\" encoding==\"UTF-8=\"?>">>.
-
+    <<"<?xml version=\"1.0\" encoding=\"UTF-8\"?>">>.
 
 
 add_if_not_present([], Tuple) ->
