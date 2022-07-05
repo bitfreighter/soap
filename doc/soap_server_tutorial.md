@@ -271,14 +271,14 @@ and the server is listed below:
 ```
 
 ```xml
-<SOAP-ENV:Envelope xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/">
-  <SOAP-ENV:Body>
-    <SOAP-ENV:Fault xmlns="">
-      <faultcode>SOAP-ENV:Server</faultcode>
+<S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/">
+  <S:Body>
+    <S:Fault xmlns="">
+      <faultcode>S:Server</faultcode>
       <faultstring>exception in handler module</faultstring>
-    </SOAP-ENV:Fault>
-  </SOAP-ENV:Body>
-</SOAP-ENV:Envelope>
+    </S:Fault>
+  </S:Body>
+</S:Envelope>
 ```
 
 Unfortunately the error message is not very helpful. What can we do to 
