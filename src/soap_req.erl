@@ -291,7 +291,7 @@ http_body(Body, Headers, Version) ->
 
 soap_env(Body, Headers, '1.2') ->
     [xml_header(),
-    <<"<S:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
+    <<"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
      <<"<S:Body>">>,
      Body,
@@ -299,7 +299,7 @@ soap_env(Body, Headers, '1.2') ->
 %% version 1.1 is the default
 soap_env(Body, Headers, _) ->
     [xml_header(),
-    <<"<S:Envelope xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
+    <<"<S:Envelope xmlns:S=\"http://schemas.xmlsoap.org/soap/envelope/\" xmlns:env=\"http://schemas.xmlsoap.org/soap/envelope/\">">>,
      headers(Headers),
      <<"<S:Body>">>,
      Body,
