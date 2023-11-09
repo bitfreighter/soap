@@ -116,6 +116,7 @@ new_req(Handler, Server, Options, Server_req) ->
 -spec handle_message(Message :: binary(), Soap_req :: soap_req()) ->
     server_http_response().
 handle_message(Message, Soap_req) ->
+    io:format("enter handle_message/2"),
     Handler = soap_req:handler(Soap_req),
     Handler_state = soap_req:handler_state(Soap_req),
     %% Call the erlsom sax parser with a callback that
@@ -137,6 +138,7 @@ handle_message(Message, Soap_req) ->
             soap_req:http_response(SoapReq2)
     catch
         Class:Reason:Stacktrace ->
+            io:format("Class:Reason:Stacktrace but the cringe one "),
             Soap_error =
                 case {Class, Reason} of
                     {throw, #soap_error{}} ->
@@ -309,14 +311,17 @@ xml_parser_cb_wrapped(Event, #p_state{state = _Parser_state,
                                       handler_state = Handler_state,
                                       soap_req = Soap_req} = S) ->
     try
+        io:format("attempt to parse "),
         R = xml_parser_cb(Event, S),
         %% io:format("R: ~P~n", [R, 8]),
         R
     catch
         %% TODO: differentiate more (perhaps improve erlsom error codes)
         throw:#soap_error{} = Soap_error ->
+            io:format("she soap on my error "),
             throw(Soap_error#soap_error{soap_req = Soap_req, handler_state = Handler_state});
         Class:Reason:Stacktrace ->
+            io:format("Class:Reason:Stacktrace "),
             throw(#soap_error{type = client,
                               class = Class,
                               stacktrace = Stacktrace,
