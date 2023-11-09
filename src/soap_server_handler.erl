@@ -125,7 +125,6 @@ handle_message(Message, Soap_req) ->
     %% handler module to parse header(s) and body.
     Header_handler = get_function(Handler, header, 3, fun skip/3),
     Body_handler = get_function(Handler, body, 3, fun handle/3),
-    try
         erlsom_sax:parseDocument(Message,
                                  #p_state{handler = Handler,
                                  handler_state = Handler_state,
@@ -133,31 +132,9 @@ handle_message(Message, Soap_req) ->
                                  body_handler = Body_handler,
                                  soap_req = Soap_req,
                                  state = start},
-                                 fun xml_parser_cb_wrapped/2, []) of
-        {ok, SoapReq2, _Tail} ->
-            soap_req:http_response(SoapReq2)
-    catch
-        Class:Reason:Stacktrace ->
-            io:format("Class:Reason:Stacktrace but the cringe one "),
-            Soap_error =
-                case {Class, Reason} of
-                    {throw, #soap_error{}} ->
-                        Reason;
-                    {_, _} ->
-                        #soap_error{type = client,
-                                    class = Class,
-                                    stacktrace = Stacktrace,
-                                    reason = Reason,
-                                    handler = Handler,
-                                    handler_state = Handler_state,
-                                    soap_req = Soap_req,
-                                    description = "Error parsing XML"}
-                end,
-            Exception_resp = make_exception(Handler, Soap_error),
-            Error_soap_req = Soap_error#soap_error.soap_req,
-            Error_s_req2 = soap_req:set_resp(Exception_resp, Error_soap_req),
-            soap_req:http_response(Error_s_req2)
-    end.
+                                 fun xml_parser_cb_wrapped/2, []).
+        %%{ok, SoapReq2, _Tail} ->
+            %%soap_req:http_response(SoapReq2).
 
 %% This function can be called by the server integration middleware.
 %% It must be called when method and headers are known, but it is not yet
@@ -310,27 +287,7 @@ xml_parser_cb_wrapped(Event, #p_state{state = _Parser_state,
                                       handler = Handler,
                                       handler_state = Handler_state,
                                       soap_req = Soap_req} = S) ->
-    try
-        io:format("attempt to parse "),
-        R = xml_parser_cb(Event, S),
-        %% io:format("R: ~P~n", [R, 8]),
-        R
-    catch
-        %% TODO: differentiate more (perhaps improve erlsom error codes)
-        throw:#soap_error{} = Soap_error ->
-            io:format("she soap on my error "),
-            throw(Soap_error#soap_error{soap_req = Soap_req, handler_state = Handler_state});
-        Class:Reason:Stacktrace ->
-            io:format("Class:Reason:Stacktrace "),
-            throw(#soap_error{type = client,
-                              class = Class,
-                              stacktrace = Stacktrace,
-                              reason = Reason,
-                              handler = Handler,
-                              handler_state = Handler_state,
-                              soap_req = Soap_req,
-                              description = "Error parsing XML"})
-    end.
+    xml_parser_cb(Event, S).
 
 %% Parses the message and calls the callback functions in the handler module.
 %%
